@@ -1,0 +1,284 @@
+<% include partial/header.ejs %>
+<% include partial/sidebar.ejs %>
+
+<script type="text/javascript">
+	function searchBoard() {
+		var select, text, filter, table, tr, td, i;
+		select 	= document.getElementById("search-by");
+		text 		= document.getElementById("text-search");
+		table 	= document.getElementById("table");
+		filter 	= text.value.toUpperCase();
+		tr 			= table.getElementsByTagName("tr");
+
+		// Loop through all table rows, and hide those who don't match the search query
+		for (i = 0; i < tr.length; i++) {
+			if(select.options[select.selectedIndex].value == "board_name") {
+				td = tr[i].getElementsByTagName("td")[2];
+			} else if(select.options[select.selectedIndex].value == "board_desc") {
+				td = tr[i].getElementsByTagName("td")[3];
+			} else if(select.options[select.selectedIndex].value == "running_text") {
+				td = tr[i].getElementsByTagName("td")[4];
+			} else if(select.options[select.selectedIndex].value == "alert_text") {
+				td = tr[i].getElementsByTagName("td")[4];
+			}
+
+			if (td) {
+				if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+
+	function edit_board(id)
+	{
+		$(".blackflash").show();
+		$(".loading-pop").show();
+		$.ajax({
+			url: "/cms/board/"+id,
+			success:function(result,status){
+				$(".blackout").show();
+				$("#form_edit").show();
+        response = result;
+				if(response.status == 'ok')
+				{
+  				$('[name="id"]').val(response.board_id);
+  				$('[name="board_name"]').val(response.board_name);
+  				$('[name="board_desc"]').val(response.board_desc);
+					$('[name="running_text"]').val(response.running_text);
+					$('[name="alert_text"]').val(response.alert_text);
+
+					$(".loading-pop").hide();
+					$("#form_edit").show();
+					$(".canvasshow").css('margin-top','6%');
+					$(".canvasshow").fadeIn(200).animate({'margin-top':'5%'},{queue:false,duration:200});
+				}
+				else
+				{
+					addpop(false);
+				}
+			}
+		});
+	}
+</script>
+
+  <div class="title-main">
+  	<i class="material-icons">important_devices</i>
+  	<h2>BOARD</h2>
+  </div>
+  <br>
+  <div class="wrap-satu">
+  	<div class="panel-data">
+			<div class="data-select">
+				<select class="text" id="search-by" name="search">
+					<option value="board_name">Name</option>
+          <option value="board_desc">Description</option>
+					<option value="running_text">Running Text</option>
+        </select>
+			</div>
+			<div class="data-search">
+				<span class="icon-search"><i class="material-icons">search</i></span>
+				<input id="text-search" type="text" class="search" autocomplete="off" value="" placeholder="Search..." onblur="$('.data-search').removeClass('search-area');$('.icon-close').hide();$('.search-holder').show();$(this).hide()" onkeyup="searchBoard()" required="">
+				<span class="icon-close"><i class="material-icons">close</i></span>
+			</div>
+      <div id="form_add">
+        <button class="biru plus right" @click="showModalBoard = true">Add Board</button>
+        <modal-add :show="showModalBoard" @close="showModalBoard = false"></modal-add>
+      </div>
+  		<a href='javascript:delChecked("board")' onclick="return konfirmasi('semua data yang terpilih')">
+  			<button id="buttonDelete" class="merah" style="float:right;padding:8px 15px;margin-left: 5px;display:none">DELETE SELECTED</button>
+  		</a>
+  	</div>
+  </div>
+
+  <div class="content satu" style="padding: 1%; width: 98%;overflow:visible">
+  	<table class="table" id="table">
+  		<thead>
+  			<tr>
+  				<th width="30" align="center">
+  					<div class="toggle" style="padding-top: 5px;height: 25px;">
+  		    			<input type="checkbox" class="filled-in" id="mainbox" onclick="cekall();clickCheck();">
+  						<label for="mainbox"><span></span></label>
+  					</div>
+  				</th>
+  				<th width="20%" colspan="2">Name</th>
+  				<th width="15%">Description</th>
+					<th width="15%">Running Text</th>
+					<th width="15%">Alert Text</th>
+  				<th style="text-align: center;">Information</th>
+  				<th style="text-align: center;width: 60px;">Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+				<% if(board) { %>
+				<% for(var i=0; i < board.length; i++) { %>
+  			<tr id="board<%= board[i].board_id %>">
+  				<td align="center">
+  					<div class="toggle" style="padding-top: 10px;">
+  		    			<input type="checkbox" class="filled-in chk" id="chk<%= board[i].board_id %>" value="<%= board[i].board_id %>" onclick="clickCheck()">
+  						<label for="chk<%= board[i].board_id %>"><span></span></label>
+  					</div>
+  				</td>
+  				<td>
+						<% var color = ["red","light-red","yellow","orange","green","blue","dark-green","purple","light-green","grey","lime"]; %>
+						<% var picked_color = color[Math.floor(Math.random()*color.length)]; %>
+            <div class="ikon <%= picked_color %>">
+              <%= board[i].board_name.substr(0,1) %>
+            </div>
+  				</td>
+  				<td style="width:300px !important;">
+  					<b><%= board[i].board_name %></b><br>
+  				</td>
+  				<td>
+  					<span class="exsmall-td"><%= board[i].board_desc %></span>
+  				</td>
+					<td>
+  					<span class="exsmall-td"><%= board[i].running_text %></span>
+  				</td>
+					<td>
+  					<span class="exsmall-td"><%= board[i].alert_text %></span>
+  				</td>
+  				<td align="center">
+            <span class="small-bold">Used By : <%= board[i].total_data %> Data</span><br>
+  				</td>
+  				<td>
+					<a href="/board/<%= board[i].board_id %>" target="_blank">
+						<div class="action act-detail" data-tooltip="Board Preview">
+						<i class="material-icons">important_devices</i>
+						</div>
+					</a>
+  					<div class="action act-edit" onclick="edit_board(<%= board[i].board_id %>)" data-tooltip="Edit Data">
+  						<i class="material-icons">mode_edit</i>
+  					</div>
+  					<div class="action act-delete" onclick="hapus('board', <%= board[i].board_id %>, 'board')" data-tooltip="Hapus Data">
+  						<i class="material-icons">delete</i>
+  					</div>
+  				</td>
+  			</tr>
+				<% } %>
+				<% } else { %>
+				<tr id="#">
+  				<td colspan='10' align='center' style='padding:30px 0px;'><span class='small-bold'>No Record, please add new data</span></td>
+  			</tr>
+				<% } %>
+  		</tbody>
+  	</table>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">SHOW ALL</div>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">DATA</div>
+  </div>
+  <!-- template for the NewModal component -->
+  <script type="x/template" id="modal-add">
+    <modal :show="show" @close="close">
+      <div class="title">
+        <h3>Form Board</h3>
+        <div class="canvasmain">
+          <form method="post" action="/cms/board">
+            <table border="0" class="form">
+              <tr>
+                <td width="180">Name</td>
+                <td><input name="board_name" type="text" class="text lebar" placeholder="Name" required=""></td>
+              </tr>
+              <tr>
+                <td valign="top">Description</td>
+                <td><textarea name="board_desc" class="text lebar" placeholder="Description" style="height:70px"></textarea></td>
+              </tr>
+							<tr>
+                <td valign="top">Running Text</td>
+                <td><textarea name="running_text" class="text lebar" placeholder="Running Text" style="height:70px"></textarea></td>
+              </tr>
+							<tr>
+                <td valign="top">Alert Text</td>
+                <td><textarea name="alert_text" class="text lebar" placeholder="Alert Text" style="height:70px"></textarea></td>
+              </tr>
+              <tr>
+                <td></td>
+                <td>
+                  <button type="submit" class="biru right">SUBMIT</button>
+                  <input type="button" class="button default right" @click="close" value="CLOSE">
+                </td>
+              </tr>
+            </table>
+          </form>
+        </div>
+      </div>
+    </modal>
+  </script>
+
+  <script type="text/javascript">
+    Vue.component('ModalAdd', {
+      template: '#modal-add',
+      props: ['show'],
+      data: function () {
+        return {
+          comment: ''
+        };
+      },
+      methods: {
+        close: function () {
+          this.$emit('close');
+          this.comment = '';
+        },
+        postComment: function () {
+          // Some save logic goes here...
+          this.close();
+        }
+      }
+      });
+
+      new Vue({
+        el: '#form_add',
+        data: {
+          showModalBoard: false
+        }
+      });
+  </script>
+
+  <!-- bagian pop up, html yang digunakan untuk pop up. hampir sama disemua bagian -->
+  <div class="blackout"></div>
+  <div class="blackflash">
+  	<div class="loading-pop">
+  		<div class="loader">
+  			<svg class="circular" viewBox="25 25 50 50">
+  			  <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+  			</svg>
+  		</div>
+  	</div>
+  	<div class="canvasshow">
+      	<div id="form_edit" class="title">
+      		<h3>Form Board</h3>
+      		<div class="canvasmain">
+      			<form method="POST" action="/cms/board">
+  	    			<table border="0" class="form">
+                <input type="hidden" name="_method" value="PUT">
+  	    				<input type="hidden" name="id" value="">
+  	    				<tr>
+                  <td width="180">Name</td>
+                  <td><input name="board_name" type="text" class="text lebar" placeholder="Name" required=""></td>
+                </tr>
+                <tr>
+                  <td valign="top">Description</td>
+                  <td><textarea name="board_desc" class="text lebar" placeholder="Description" style="height:70px"></textarea></td>
+                </tr>
+								<tr>
+	                <td valign="top">Running Text</td>
+	                <td><textarea name="running_text" class="text lebar" placeholder="Running Text" style="height:70px"></textarea></td>
+	              </tr>
+								<tr>
+	                <td valign="top">Alert Text</td>
+	                <td><textarea name="alert_text" class="text lebar" placeholder="Alert Text" style="height:70px"></textarea></td>
+	              </tr>
+  	    				<tr>
+  	    					<td></td>
+  	    					<td><button type="submit" class="biru right">SUBMIT</button>
+  	    					<input type="button" class="button default right" onclick="addpop(false)" value="CLOSE"></td>
+  	    				</tr>
+  	    			</table>
+      			</form>
+          	</div>
+  		</div>
+  	</div>
+  </div>
+  <!-- pop up -->
+<% include partial/footer.ejs %>

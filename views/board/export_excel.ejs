@@ -1,0 +1,795 @@
+<html>
+	<head>
+		<title>Laporan Data Board</title>
+	</head>
+	<body>
+	<style type="text/css">
+	.judul{ margin:0px 0px 5px 150px; padding:0; font-size:20px;}
+	</style>
+	<?php
+		if($_GET['type'] == 'rekrut')
+		{
+			$title_excel 	= "Laporan_Dashboard_PR_Rekrut";
+			$filename 		= str_replace(".xls", "", $title_excel);
+
+			//echo $query;
+			header("Content-type: application/x-msdownload");
+			header("Content-Disposition: attachment; filename=".$filename.".xls");
+
+			$query_cek_doc_lengkap  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_medical FROM tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+	        									tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+	        									tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+	        									abs(datediff(tbl_data_dokumentasi.tgl_medical, CURDATE())) > '14' AND
+	        									tbl_data_dokumentasi.tgl_medical != '0000-00-00' AND tbl_data_dokumentasi.tgl_dokumen_lengkap = '0000-00-00';");
+	        $num_doc_lengkap   = mysql_num_rows($query_cek_doc_lengkap);
+
+	          // ID
+			$query_cek_doc_id  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_dokumen_lengkap FROM tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+											tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+											tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_dokumentasi.tgl_dokumen_lengkap, CURDATE())) > '7' AND
+											tbl_data_dokumentasi.tgl_dokumen_lengkap != '0000-00-00' AND tbl_data_dokumentasi.tgl_id = '0000-00-00';");
+			$num_doc_id        = mysql_num_rows($query_cek_doc_id);
+
+			// PASSPORT
+			$query_cek_doc_passport  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_id FROM tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+											tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+											tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_dokumentasi.tgl_id, CURDATE())) > '7' AND
+											tbl_data_dokumentasi.tgl_id != '0000-00-00' AND tbl_data_dokumentasi.tgl_passport = '0000-00-00';");
+			$num_doc_passport        = mysql_num_rows($query_cek_doc_passport);
+
+			// SKCK
+			$query_cek_doc_skck  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_passport FROM tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+											tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+											tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_dokumentasi.tgl_passport, CURDATE())) > '7' AND
+											tbl_data_dokumentasi.tgl_passport != '0000-00-00' AND tbl_data_dokumentasi.tgl_skck_polda = '0000-00-00' AND (tbl_data.id_master_negara = '2' OR tbl_data.id_master_negara = '5');");
+			$num_doc_skck        = mysql_num_rows($query_cek_doc_skck);
+
+			// SIAP BERANGKAT
+			$query_cek_siap_berangkat  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_skck_polda FROM tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+											tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+											tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_dokumentasi.tgl_skck_polda, CURDATE())) > '7' AND
+											tbl_data_dokumentasi.tgl_skck_polda != '0000-00-00' AND tbl_data_dokumentasi.tgl_siap_berangkat = '0000-00-00';");
+			$num_siap_berangkat        = mysql_num_rows($query_cek_siap_berangkat);
+
+	?>
+		<table border="1">
+			<tr>
+				<th rowspan="2">No</th>
+				<th rowspan="2">Negara Tujuan</th>
+				<th rowspan="2">Nama KTP</th>
+				<th rowspan="2">Cabang</th>
+				<th rowspan="2">Nama PL</th>
+				<th>Dokumen Lengkap</th>
+				<th>ID</th>
+				<th>Passport</th>
+				<th>SKCK</th>
+				<th>Siap Berangkat</th>
+			</tr>
+			<tr>
+				<th><?=$num_doc_lengkap?></th>
+				<th><?=$num_doc_id?></th>
+				<th><?=$num_doc_passport?></th>
+				<th><?=$num_doc_skck?></th>
+				<th><?=$num_siap_berangkat?></th>
+			</tr>
+			<?php
+				$i 	= 1;
+				while ($doc_lengkap = mysql_fetch_array($query_cek_doc_lengkap)) {
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$doc_lengkap['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$doc_lengkap['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$doc_lengkap['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($doc_lengkap['tgl_medical'].' + 14 days');
+					$datediff = $now - $your_date;
+
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$doc_lengkap['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($document = mysql_fetch_array($query_cek_doc_id)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$document['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$document['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$document['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($document['tgl_dokumen_lengkap'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($document = mysql_fetch_array($query_cek_doc_passport)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$document['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$document['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$document['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($document['tgl_id'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($document = mysql_fetch_array($query_cek_doc_skck)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$document['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$document['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$document['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($document['tgl_passport'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($document = mysql_fetch_array($query_cek_siap_berangkat)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$document['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$document['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$document['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($document['tgl_skck_polda'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+              		echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+            	}
+			?>
+		</table>
+	<?php
+		}
+		else if($_GET['type'] == 'market')
+		{
+			$title_excel 	= "Laporan_Dashboard_PR_Market";
+			$filename 		= str_replace(".xls", "", $title_excel);
+
+			//echo $query;
+			header("Content-type: application/x-msdownload");
+			header("Content-Disposition: attachment; filename=".$filename.".xls");
+
+			$query_cek_tgl_majikan  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_medical FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_agensi WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_agensi.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+										abs(datediff(tbl_data_dokumentasi.tgl_medical, CURDATE())) > '30' AND
+										tbl_data_dokumentasi.tgl_medical != '0000-00-00' AND
+			          (
+			            (tbl_data_agensi.tgl_open_bio != '0000-00-00' AND tbl_data_agensi.tgl_majikan = '0000-00-00')
+			          );");
+			$num_tgl_majikan        = mysql_num_rows($query_cek_tgl_majikan);
+
+			// tanggal approved
+			$query_cek_tgl_approved  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp,
+			          tbl_data_agensi.tgl_majikan FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_agensi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+			          tbl_data.id_data = tbl_data_agensi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          (
+			            (abs(datediff(tbl_data_agensi.tgl_majikan, CURDATE())) > '14' AND tbl_data_agensi.tgl_majikan != '0000-00-00')
+			          ) AND
+			          tbl_data_approval.tgl_approved = '0000-00-00';");
+			$num_tgl_approved        = mysql_num_rows($query_cek_tgl_approved);
+
+			// tanggal suhan
+			$query_cek_tgl_suhan  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_approved FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          abs(datediff(tbl_data_approval.tgl_approved, CURDATE())) > '14' AND tbl_data_approval.tgl_approved != '0000-00-00' AND
+			          tbl_data_approval.tgl_suhan = '0000-00-00';");
+			$num_tgl_suhan        = mysql_num_rows($query_cek_tgl_suhan);
+
+			// tanggal visa
+			$query_cek_tgl_visa  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_suhan FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          abs(datediff(tbl_data_approval.tgl_suhan, CURDATE())) > '14' AND tbl_data_approval.tgl_suhan != '0000-00-00' AND
+			          tbl_data_approval.tgl_visa = '0000-00-00';");
+			$num_tgl_visa        = mysql_num_rows($query_cek_tgl_visa);
+
+	?>
+		<table border="1">
+			<tr>
+				<th rowspan="2">No</th>
+				<th rowspan="2">Negara Tujuan</th>
+				<th rowspan="2">Nama KTP</th>
+				<th rowspan="2">Cabang</th>
+				<th rowspan="2">Nama PL</th>
+				<th>Majikan</th>
+				<th>Approved</th>
+				<th>Suhan</th>
+				<th>Visa</th>
+			</tr>
+			<tr>
+				<th><?=$num_tgl_majikan?></th>
+				<th><?=$num_tgl_approved ?></th>
+				<th><?=$num_tgl_suhan?></th>
+				<th><?=$num_tgl_visa?></th>
+			</tr>
+			<?php
+				$i 	= 1;
+				while ($data = mysql_fetch_array($query_cek_tgl_majikan)) {
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$data['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$data['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$data['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($data['tgl_medical'].' + 30 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$data['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($approved = mysql_fetch_array($query_cek_tgl_approved)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$approved['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$approved['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$approved['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					if($approved['tgl_majikan'] != '0000-00-00')
+						{ $tgl_majikan = $approved['tgl_majikan']; }
+					else
+						{ $tgl_majikan = "NULL"; }
+
+					// cek telat
+					if($tgl_majikan != "0000-00-00")
+					{
+						$now = time(); // or your date as well
+						$your_date = strtotime($tgl_majikan.' + 14 days');
+						$datediff = $now - $your_date;
+						$late = floor($datediff / (60 * 60 * 24));
+					}
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$approved['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($suhan = mysql_fetch_array($query_cek_tgl_suhan)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$suhan['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$suhan['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$suhan['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($suhan['tgl_approved'].' + 14 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$suhan['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($visa = mysql_fetch_array($query_cek_tgl_visa)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$visa['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$visa['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$visa['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($visa['tgl_suhan'].' + 14 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$visa['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+			?>
+		</table>
+	<?php
+		}
+		else if($_GET['type'] == 'market')
+		{
+			$title_excel 	= "Laporan_Dashboard_PR_Market";
+			$filename 		= str_replace(".xls", "", $title_excel);
+
+			//echo $query;
+			header("Content-type: application/x-msdownload");
+			header("Content-Disposition: attachment; filename=".$filename.".xls");
+
+			$query_cek_tgl_majikan  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_medical FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_agensi WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_agensi.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+										abs(datediff(tbl_data_dokumentasi.tgl_medical, CURDATE())) > '30' AND
+										tbl_data_dokumentasi.tgl_medical != '0000-00-00' AND
+			          (
+			            (tbl_data_agensi.tgl_open_bio != '0000-00-00' AND tbl_data_agensi.tgl_majikan = '0000-00-00')
+			          );");
+			$num_tgl_majikan        = mysql_num_rows($query_cek_tgl_majikan);
+
+			// tanggal approved
+			$query_cek_tgl_approved  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp,
+			          tbl_data_agensi.tgl_majikan FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_agensi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+			          tbl_data.id_data = tbl_data_agensi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          (
+			            (abs(datediff(tbl_data_agensi.tgl_majikan, CURDATE())) > '14' AND tbl_data_agensi.tgl_majikan != '0000-00-00')
+			          ) AND
+			          tbl_data_approval.tgl_approved = '0000-00-00';");
+			$num_tgl_approved        = mysql_num_rows($query_cek_tgl_approved);
+
+			// tanggal suhan
+			$query_cek_tgl_suhan  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_approved FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          abs(datediff(tbl_data_approval.tgl_approved, CURDATE())) > '14' AND tbl_data_approval.tgl_approved != '0000-00-00' AND
+			          tbl_data_approval.tgl_suhan = '0000-00-00';");
+			$num_tgl_suhan        = mysql_num_rows($query_cek_tgl_suhan);
+
+			// tanggal visa
+			$query_cek_tgl_visa  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_suhan FROM
+			          tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_approval WHERE
+										tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+										tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			          abs(datediff(tbl_data_approval.tgl_suhan, CURDATE())) > '14' AND tbl_data_approval.tgl_suhan != '0000-00-00' AND
+			          tbl_data_approval.tgl_visa = '0000-00-00';");
+			$num_tgl_visa        = mysql_num_rows($query_cek_tgl_visa);
+
+	?>
+		<table border="1">
+			<tr>
+				<th rowspan="2">No</th>
+				<th rowspan="2">Negara Tujuan</th>
+				<th rowspan="2">Nama KTP</th>
+				<th rowspan="2">Cabang</th>
+				<th rowspan="2">Nama PL</th>
+				<th>Majikan</th>
+				<th>Approved</th>
+				<th>Suhan</th>
+				<th>Visa</th>
+			</tr>
+			<tr>
+				<th><?=$num_tgl_majikan?></th>
+				<th><?=$num_tgl_approved ?></th>
+				<th><?=$num_tgl_suhan?></th>
+				<th><?=$num_tgl_visa?></th>
+			</tr>
+			<?php
+				$i 	= 1;
+				while ($data = mysql_fetch_array($query_cek_tgl_majikan)) {
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$data['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$data['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$data['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($data['tgl_medical'].' + 30 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$doc_lengkap['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($approved = mysql_fetch_array($query_cek_tgl_approved)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$approved['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$approved['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$approved['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					if($approved['tgl_majikan'] != '0000-00-00')
+						{ $tgl_majikan = $approved['tgl_majikan']; }
+					else
+						{ $tgl_majikan = "NULL"; }
+
+					// cek telat
+					if($tgl_majikan != "0000-00-00")
+					{
+						$now = time(); // or your date as well
+						$your_date = strtotime($tgl_majikan.' + 14 days');
+						$datediff = $now - $your_date;
+						$late = floor($datediff / (60 * 60 * 24));
+					}
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($suhan = mysql_fetch_array($query_cek_tgl_suhan)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$suhan['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$suhan['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$suhan['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($suhan['tgl_approved'].' + 14 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($visa = mysql_fetch_array($query_cek_tgl_visa)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$visa['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$visa['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$visa['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($visa['tgl_suhan'].' + 14 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$document['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+			?>
+		</table>
+	<?php
+		}
+		else if($_GET['type'] == 'akhir')
+		{
+			$title_excel 	= "Laporan_Dashboard_PR_Akhir";
+			$filename 		= str_replace(".xls", "", $title_excel);
+
+			//echo $query;
+			header("Content-type: application/x-msdownload");
+			header("Content-Disposition: attachment; filename=".$filename.".xls");
+
+			$query_cek_ujk  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_medical FROM
+                      tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+                      tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+                      tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+                      abs(datediff(tbl_data_dokumentasi.tgl_medical, CURDATE())) > '60' AND
+                      tbl_data_dokumentasi.tgl_medical != '0000-00-00' AND tbl_data_dokumentasi.tgl_serti_ujk = '0000-00-00';");
+			$num_ujk   = mysql_num_rows($query_cek_ujk);
+
+			// TETO
+			$query_cek_teto  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_suhan FROM
+			              tbl_data, tbl_data_status, tbl_data_approval WHERE
+			              tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+			              tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_approval.tgl_suhan, CURDATE())) > '14' AND tbl_data_approval.tgl_suhan != '0000-00-00' AND
+			              tbl_data_approval.tgl_teto = '0000-00-00';");
+			$num_teto        = mysql_num_rows($query_cek_teto);
+
+			// PAP
+			$query_cek_pap  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_approval.tgl_visa FROM
+			              tbl_data, tbl_data_status, tbl_data_dokumentasi, tbl_data_approval WHERE
+			              tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND tbl_data.id_data = tbl_data_approval.id_data AND
+			              tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_approval.tgl_visa, CURDATE())) > '7' AND tbl_data_approval.tgl_visa != '0000-00-00' AND
+			              tbl_data_dokumentasi.tgl_pap = '0000-00-00';");
+			$num_pap        = mysql_num_rows($query_cek_pap);
+
+			// BERANGKAT
+			$query_cek_berangkat  = mysql_query("SELECT tbl_data.id_master_negara, tbl_data.id_master_cabang, tbl_data.id_master_pl, tbl_data.nama_lengkap_ktp, tbl_data_dokumentasi.tgl_pap FROM
+			              tbl_data, tbl_data_status, tbl_data_dokumentasi WHERE
+			              tbl_data.id_data = tbl_data_status.id_data AND tbl_data.id_data = tbl_data_dokumentasi.id_data AND
+			              tbl_data.delete_status = '0' AND tbl_data_status.status = '0' AND
+			              abs(datediff(tbl_data_dokumentasi.tgl_pap, CURDATE())) > '7' AND tbl_data_dokumentasi.tgl_pap != '0000-00-00' AND
+			              tbl_data_status.tgl_berangkat = '0000-00-00';");
+			$num_berangkat        = mysql_num_rows($query_cek_berangkat);
+	?>
+		<table border="1">
+			<tr>
+				<th rowspan="2">No</th>
+				<th rowspan="2">Negara Tujuan</th>
+				<th rowspan="2">Nama KTP</th>
+				<th rowspan="2">Cabang</th>
+				<th rowspan="2">Nama PL</th>
+				<th>UJK</th>
+				<th>Teto</th>
+				<th>PAP</th>
+				<th>Berangkat</th>
+			</tr>
+			<tr>
+				<th><?=$num_ujk?></th>
+				<th><?=$num_teto ?></th>
+				<th><?=$num_pap?></th>
+				<th><?=$num_berangkat?></th>
+			</tr>
+			<?php
+				$i 	= 1;
+				while ($ujk = mysql_fetch_array($query_cek_ujk)) {
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$ujk['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$ujk['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$ujk['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($ujk['tgl_medical'].' + 60 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$ujk['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($teto = mysql_fetch_array($query_cek_teto)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$teto['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$teto['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$teto['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+
+					// cek telat
+					$now = time(); // or your date as well
+                	$your_date = strtotime($teto['tgl_suhan'].' + 14 days');
+                	$datediff = $now - $your_date;
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$teto['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($pap = mysql_fetch_array($query_cek_pap)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$pap['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$pap['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$pap['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($pap['tgl_visa'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$pap['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+				while ($berangkat = mysql_fetch_array($query_cek_berangkat)) {
+					//cek cabang
+					$cek_cabang   = mysql_query("SELECT * FROM tbl_master_cabang WHERE id_master_cabang = '".$berangkat['id_master_cabang']."';");
+					$cabang       = mysql_fetch_array($cek_cabang);
+					//cek PL
+					$cek_pl   = mysql_query("SELECT * FROM tbl_master_pl WHERE id_master_pl = '".$berangkat['id_master_pl']."';");
+					$pl       = mysql_fetch_array($cek_pl);
+
+					$cek_negara   = mysql_query("SELECT * FROM tbl_master_negara WHERE id_master_negara = '".$berangkat['id_master_negara']."';");
+					$negara       = mysql_fetch_array($cek_negara);
+					// cek telat
+					$now = time(); // or your date as well
+					$your_date = strtotime($berangkat['tgl_pap'].' + 7 days');
+					$datediff = $now - $your_date;
+					$late = floor($datediff / (60 * 60 * 24));
+
+					echo "<tr>
+						<td>".$i."</td>
+						<td>".$negara['nama']."</td>
+						<td>".$berangkat['nama_lengkap_ktp']."</td>
+						<td>".$cabang['nama']."</td>
+						<td>".$pl['nama']."</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>ADA</td>
+						<td>".$late."</td>";
+					echo "</tr>";
+					$i++;
+				}
+			?>
+		</table>
+	<?php
+		}
+	?>
+	</body>
+</html>

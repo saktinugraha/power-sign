@@ -1,0 +1,78 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>PowerSign CMS - AdminPanel</title>
+    <link rel="stylesheet" type="text/css" href="../css/administrator.css">
+    <link rel="stylesheet" type="text/css" href="../css/jquery-ui.min.css?id=4">
+		<link rel="stylesheet" type="text/css" href="../css/roboto.css">
+		<link rel="shortcut icon" href="../img/icon.png" />
+    <link rel="stylesheet" type="text/css" href="../css/material-icons.css">
+		<script type='text/javascript' charset='utf-8' src='../js/jquery-1.12.4.js'></script>
+    <script type='text/javascript' src="../js/progressbar.js"></script>
+    <script type='text/javascript' src="../js/vue.js"></script>
+    <script type='text/javascript' charset='utf-8' src='../js/jquery-ui.min.js'></script>
+    <script type='text/javascript' charset='utf-8' src='../js/main.js'></script>
+    <script type='text/javascript' charset='utf-8' src='../js/chart.min.js'></script>
+    <script type="text/javascript">
+      function runload() {
+      	var bar = new ProgressBar.Line(container, {
+      		strokeWidth: 1000,
+      		easing: 'easeInOut',
+      		duration: 1000,
+      		color: '#2196f3',
+      		trailColor: '#ddd',
+      		trailWidth: 1,
+      		svgStyle: {width: '100%', height: '3px'}
+      	});
+      	bar.animate(1.0);
+      }
+			// $(document).ready(function(){ artinya mengaktifkan fungsi pada saat halaman ini di load. langsung mengaktifkan fungsi
+		    $(document).ready(function(){
+					$(".list").hover(
+					  function(){ $(".list-opt").hide();}
+					);
+          $('.ajax-call').click(function(e){
+            runload();
+          });
+		    });
+        // line
+		</script>
+  </head>
+  <body>
+    <div id="container"></div>
+    <section id="wrapper">
+			<nav id="navbar">
+				<div class="menu-toggle" onclick="collapse()">
+					<i class="material-icons">menu</i>
+				</div>
+				<!-- area navbar pada administrator, serta logo admin pada pojok kanan atas-->
+				<div class="nav-title">
+					PowerSign CMS
+				</div>
+				<div class="nav-user" onclick="$('.nav-detail').toggle()">
+					<div class="nav-thumb">
+						<img src="../img/user.jpg">
+					</div>
+					<div class="nav-name">
+						<div class="nameuser">
+							<%= session_info.admin_name %> <br>
+							<span class="hakakses"><%= session_info.username %></span>
+						</div>
+						<i class="material-icons">expand_more</i>
+					</div>
+				</div>
+				<div class="nav-detail">
+					<div class="arrow"></div>
+					<ul>
+						<li><a href="/cms/account"><i class="material-icons">person</i> <span>Account Setting</span></a></li>
+						<li><a href="/cms/account"><i class="material-icons">settings</i> <span>Change Password</span></a></li>
+            <li>
+              <a href="" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                  <i class="material-icons"> power_settings_new</i> <span>Logout</span>
+              </a>
+              <form id="logout-form" action="/cms/auth/logout" method="GET" style="display: none;">
+              </form>
+            </li>
+					</ul>
+				</div>
+      </nav>

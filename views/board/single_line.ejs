@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>CJ Digital Signage Board</title>
+    <link rel="shortcut icon" href="../images/icon.png" />
+    <link rel="stylesheet" href="../css/board.css">
+    <script src="../js/jquery.js" charset="utf-8"></script>
+    <script type="text/javascript">
+      var my_time;
+      $(document).ready(function() {
+        pageScroll();
+        $("#main").mouseover(function() {
+          clearTimeout(my_time);
+        }).mouseout(function() {
+          pageScroll();
+        });
+      });
+
+      function pageScroll() {
+        var result = $("#main").height();
+        var objDiv = document.getElementById("main");
+        objDiv.scrollTop = objDiv.scrollTop + 1;
+        if ((objDiv.scrollTop + result) ==  objDiv.scrollHeight) {
+          objDiv.scrollTop = 0;
+        }
+        my_time = setTimeout('pageScroll()', 50);
+      }
+
+	    function date_time(id)
+  		{
+        date = new Date;
+        h = date.getHours();
+        if(h<10)
+        {
+          h = "0"+h;
+        }
+        m = date.getMinutes();
+        if(m<10)
+        {
+          m = "0"+m;
+        }
+        s = date.getSeconds();
+        if(s<10)
+        {
+          s = "0"+s;
+        }
+        result = h+':'+m+':'+s;
+        document.getElementById(id).innerHTML = result;
+        setTimeout('date_time("'+id+'");','1000');
+        return true;
+  		}
+      function show_alert()
+    	{
+    		$(".blackflash").show();
+  			$(".blackout").show();
+        $("#pop_alert").show();
+        $(".canvasshow").css('margin-top','6%');
+  			$(".canvasshow").fadeIn(200).animate({'margin-top':'5%'},{queue:false,duration:200});
+    	}
+
+      function close_alert()
+      {
+        $(".blackout").fadeOut(200);
+  			$(".blackflash").hide();
+  			$(".canvasshow").hide();
+  			$(".loading-pop").hide();
+        $("#pop_alert").hide();
+      }
+		</script>
+  </head>
+  <body>
+    <div id="wrapper">
+      <header style="background:#049438;">
+        <div class="header-left">
+          <!--
+          <img src="../img/logoname.svg" width="200" height="50" style="top:0px;">
+          <h4 align="center">INDONESIA</h4>
+          -->
+        </div>
+        <div class="header-left" style="margin-left:20px;">
+          <% if(board) { %>
+          <h1><a href="/export/<%= board[0].board_id %>"><%= board[0].board_name %></a></h1>
+          <h2><a href="/export/<%= board[0].board_id %>"><%= board[0].board_desc %></a></h2>
+          <% } %>
+          <input type="button" class="button" onclick="show_alert()" value="SHOW ALERT"></td>
+        </div>
+        <div class="header-right">
+          <%
+            var init_date = new Date;
+            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            var days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+            var locale_date = init_date.toLocaleString().split(',');
+            var full_date = String(init_date).split(' ');
+          %>
+          <div class="date-day"><%= days[init_date.getDay()] %>, <%= full_date[2] %> <%= months[init_date.getMonth()] %> <%= full_date[3] %></div>
+  				<div class="date-time"><span id="date_time"></span> </div>
+  				<div class="last-update">LAST UPDATE DATA <%= locale_date[1] %></div>
+        </div>
+      </header>
+
+      <table style="width:100%;">
+    		<thead style="color:#fff;">
+    			<tr>
+    				<th width="5%"><h3>No.</h3></th>
+            <th width="5%"><h3>Status</h3></th>
+    				<th width="10%"><h3>No Container</h3></th>
+            <th width="10%"><h3>No Invoice</h3></th>
+            <th width="10%"><h3>Product</h3></th>
+            <th width="10%"><h3>Qty (KG)</h3></th>
+            <th width="15%"><h3>Remark</h3></th>
+            <th width="15%"><h3>Customer</h3></th>
+            <th width="10%"><h3>Destination</h3></th>
+    			</tr>
+    		</thead>
+      </table>
+      <div id="main" style="top:186px; bottom: 75px;">
+      <table style="width:100%;">
+    		<tbody>
+          <% if(data) { %>
+  				<% for(var i=0; i < data.length; i++) { %>
+          <% if((i % 2) == 0) {
+            var color  = "#4ac8a2";
+          } else {
+            var color  = "#fbf708";
+          } %>
+    			<tr id="data<%= data[i].data_id %>" style="background-color: <%= color %> " >
+            <td width="5%" align="center">
+              <h3><%= i+1 %><h3>
+            </td>
+    				<td width="5%">
+            <% if(data[i].status == false) { %>
+                <div class="icon" style="border-color:red; color:red;">&#10006;</div>
+            <% } else { %>
+                <div class="icon" style="border-color:green; color:green;">&#10004;</div>
+            <% } %>
+    				</td>
+  					<td width="10%">
+              <h3><b><span class="exsmall-td"><%= data[i].no_container %></span></b></h3>
+    				</td>
+            <td width="10%">
+              <h3><b><span class="exsmall-td"><%= data[i].no_invoice %></span></b></h3>
+    				</td>
+  					<td width="10%">
+    					<h3><span class="small-bold"><%= data[i].product %></span></h3>
+    				</td>
+  					<td width="10%">
+    					<h3><span class="small-bold"><%= data[i].qty %></span></h3>
+    				</td>
+    				<td width="15%">
+              <h3><span class="small-bold"><%= data[i].remark %></span></h3>
+    				</td>
+            <td width="15%">
+              <h3><span class="small-bold"><%= data[i].customer %></span></h3>
+    				</td>
+            <td width="10%">
+              <h3><span class="small-bold"><%= data[i].destination %></span></h3>
+    				</td>
+    			</tr>
+          <% } %>
+  				<% } else { %>
+  				<tr id="#">
+    				<td colspan='10' align='center' style="padding:30px 0px; color: #fff;"><h4 style="font-size:36px;">No Record, please add new data</span></td>
+    			</tr>
+
+          <div class="blackout" style="display:block;"></div>
+          <div class="blackflash" style="display:block;">
+            <div class="loading-pop">
+              <div class="loader">
+                <svg class="circular" viewBox="25 25 50 50">
+                  <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+                </svg>
+              </div>
+            </div>
+            <div class="canvasshow" style="display:block;">
+                <div id="pop_alert" class="title" style="text-align: center;">
+                  <h1>ALERT ANNOUNCEMENT</h1>
+                  <div class="canvasmain">
+                      <h1 style="font-size:48px; text-align: center;"><%= board[0].alert_text %></h1>
+                      <br>
+                      <input type="button" class="button default right" onclick="close_alert()" value="CLOSE"></td>
+                  </div>
+              </div>
+            </div>
+          </div>
+  				<% } %>
+    		</tbody>
+    	</table>
+      </div>
+      <section id="alert-bottom" style="background: #f71d13;">
+        <% if(board) { %>
+        <h1 style="font-size:48px;"><marquee behavior="scroll" direction="left"><%= board[0].running_text %></marquee></h1>
+        <% } %>
+      </section>
+    </div>
+  </body>
+<!-- bagian pop up, html yang digunakan untuk pop up. hampir sama disemua bagian -->
+<div class="blackout"></div>
+<div class="blackflash">
+  <div class="loading-pop">
+    <div class="loader">
+      <svg class="circular" viewBox="25 25 50 50">
+        <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+      </svg>
+    </div>
+  </div>
+  <div class="canvasshow">
+      <div id="pop_alert" class="title" style="text-align: center;">
+        <h1>ALERT ANNOUNCEMENT</h1>
+        <div class="canvasmain">
+            <h1 style="font-size:48px; text-align: center;"><%= board[0].alert_text %></h1>
+            <br>
+            <input type="button" class="button default right" onclick="close_alert()" value="CLOSE"></td>
+        </div>
+    </div>
+  </div>
+</div>
+<!-- pop up -->
+
+	<script type="text/javascript">
+		window.onload = date_time('date_time');
+    // reload poage
+    setTimeout(function(){
+       window.location.reload(1);
+    }, 3600000);
+
+    setTimeout(function(){
+       show_alert();
+    }, 900000);
+
+    setTimeout(function(){
+       close_alert();
+    }, 915000);
+
+	</script>
+</html>

@@ -1,0 +1,1 @@
+INSERT INTO public.setting (company_name, company_phone, contact_person, company_address, company_country, company_logo) VALUES ('PT. MSA', '082236508420', 'Sakti Nugraha', 'Rungkut, Surabaya', 'Indonesia', '');

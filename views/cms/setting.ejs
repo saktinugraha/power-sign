@@ -1,0 +1,88 @@
+<% include partial/header.ejs %>
+<% include partial/sidebar.ejs %>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$.ajax({
+		url: "/cms/setting/edit",
+		success:function(result,status){
+			response = result;
+			if(response.status == 'ok')
+			{
+				$('[name="company_name"]').val(response.company_name);
+				$('[name="company_phone"]').val(response.company_phone);
+				$('[name="contact_person"]').val(response.contact_person);
+				$('[name="company_address"]').val(response.company_address);
+				$('[name="company_country"]').val(response.company_country);
+				$('[name="company_logo"]').val(response.company_logo);
+			}
+			else
+			{
+				addpop(false);
+			}
+		}
+	});
+});
+</script>
+
+<div class="notification">
+</div>
+<style type="text/css">
+	.disabled-input {display: none;}
+	.readonly-input, .readonly-number {display: none}
+</style>
+<div class="content enam left">
+	<div class="ikon grey" style="float:left; margin-right:10px;">
+		<i class="material-icons">settings</i>
+	</div>
+	<h3>POWER SIGN - COMPANY INFORMATION SETUP</h3><br>
+		<form method="POST" action="/cms/setting/update">
+			<table border="0" class="form">
+				<input type="hidden" name="_method" value="PUT">
+				<input type="hidden" name="id" value="">
+				<tr>
+					<td width="220">Company Name</td>
+					<td><input name="company_name" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Company Phone</td>
+					<td><input name="company_phone" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Contact Person</td>
+					<td><input name="contact_person" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Company Address</td>
+					<td><input name="company_address" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Company Country</td>
+					<td><input name="company_country" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Company Logo</td>
+					<td><input name="company_logo" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<br>
+						<button type="submit" class="hijau right">SUBMIT</button>
+						<button type="reset" class="abu right">CLEAR</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+
+<div class="content tiga" style="text-align:justify;">
+	<div style="float: left; margin-right: 10px;margin-top:3px;color:#208ABE;">
+		<i class="material-icons">info_outline</i>
+	</div>
+	<h3>SETUP</h3>
+	<br>
+	Anda bisa mengatur berbagai pengaturan dasar dalam website seperti nama perusahaan dan informasi lain terkait perusahaan.
+</div>
+
+<% include partial/footer.ejs %>

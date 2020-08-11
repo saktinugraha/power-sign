@@ -1,0 +1,62 @@
+<!-- Area sidebar pada administrator, menampilkan semua menu sesuai hak akses yang dimiliki-->
+<div id="sidebar">
+  <div class="sidebar">
+    <div class="side-top">
+      <div class='photo-thumb'>
+          <div class="ikon grey">
+            <%= session_info.admin_name.substr(0,1) %>
+          </div>
+        </div>
+        <b><%= session_info.admin_name %></b><br>
+      <span style="font-size:11px;">PREMIUM ACCOUNT</span><br>
+    </div>
+    <div class="side-menu">
+      <div class="side-title-module">Data Control</div>
+        <ul>
+          <li><a href="/cms/data" class="ajax-call"><i class="material-icons" title="Data">input</i> <span>Data</span></a></li>
+          <li><a href="/cms/board" class="ajax-call"><i class="material-icons" title="Board">important_devices</i> <span>Board</span></a></li>
+        </ul>
+      <%
+      if(session_info.admin_id == '1') {
+      %>
+      <div class="side-title-module">Management</div>
+        <ul>
+          <li><a href="/cms/admin" class="ajax-call"><i class="material-icons" title="Data">people</i> <span>Admin</span></a></li>
+          <li><a href="/cms/setting" class="ajax-call"><i class="material-icons" title="Board">settings</i> <span>Setting</span></a></li>
+        </ul>
+      <%
+      }
+      %>
+    </div>
+  </div>
+</div>
+<div id="main">
+  <div class="main">
+    <!-- template for the modal component -->
+    <script type="x/template" id="modal-template">
+        <transition name="modal">
+            <div class="modal-mask" @click="close" v-show="show">
+                <div class="modal-container" @click.stop>
+                  <slot></slot>
+                </div>
+            </div>
+        </transition>
+    </script>
+    <script type="text/javascript">
+      Vue.component('Modal', {
+        template: '#modal-template',
+        props: ['show'],
+        methods: {
+          close: function () {
+            this.$emit('close');
+          }
+        },
+        mounted: function () {
+          document.addEventListener("keydown", (e) => {
+            if (this.show && e.keyCode == 27) {
+              this.close();
+            }
+          });
+        }
+      });
+    </script>

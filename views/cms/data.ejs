@@ -1,0 +1,399 @@
+<% include partial/header.ejs %>
+<% include partial/sidebar.ejs %>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$(".status").on("click", function(){
+		var id = parseInt($(this).val(), 10);
+	 	//alert(id);
+	  if($(this).is(":checked")) {
+	  	// checkbox is checked -> do something
+	    toast("Data Status Done");
+			$.ajax({type: 'PUT', url: "/cms/data/"+id+"/1",
+				success:function(result,status){  } });
+	  } else {
+	  	// checkbox is not checked -> do something different
+	  	toast("Data Status Waiting");
+			$.ajax({type: 'PUT', url: "/cms/data/"+id+"/0",
+				success:function(result,status){  } });
+		}
+	});
+});
+
+	function searchData() {
+		var select, text, filter, table, tr, td, i;
+		select 	= document.getElementById("search-by");
+		text 		= document.getElementById("text-search");
+		table 	= document.getElementById("table");
+		filter 	= text.value.toUpperCase();
+		tr 			= table.getElementsByTagName("tr");
+
+		// Loop through all table rows, and hide those who don't match the search query
+		for (i = 0; i < tr.length; i++) {
+			if(select.options[select.selectedIndex].value == "board") {
+				td = tr[i].getElementsByTagName("td")[2];
+			} else if(select.options[select.selectedIndex].value == "no_container") {
+				td = tr[i].getElementsByTagName("td")[3];
+			} else if(select.options[select.selectedIndex].value == "no_invoice") {
+				td = tr[i].getElementsByTagName("td")[3];
+			} else if(select.options[select.selectedIndex].value == "product") {
+				td = tr[i].getElementsByTagName("td")[4];
+			} else if(select.options[select.selectedIndex].value == "qty") {
+				td = tr[i].getElementsByTagName("td")[4];
+			} else if(select.options[select.selectedIndex].value == "remark") {
+				td = tr[i].getElementsByTagName("td")[5];
+			} else if(select.options[select.selectedIndex].value == "customer") {
+				td = tr[i].getElementsByTagName("td")[6];
+			} else if(select.options[select.selectedIndex].value == "destination") {
+				td = tr[i].getElementsByTagName("td")[7];
+			}
+
+			if (td) {
+				if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+
+	function edit_data(id)
+	{
+		$(".blackflash").show();
+		$(".loading-pop").show();
+		$.ajax({
+			url: "/cms/data/"+id,
+			success:function(result,status){
+				$(".blackout").show();
+				$("#form_edit").show();
+        response = result;
+				if(response.status == 'ok')
+				{
+  				$('[name="id"]').val(response.data_id);
+  				$('[name="admin_id"]').val(response.admin_id);
+					$('[name="board_id"]').val(response.board_id);
+  				$('[name="no_container"]').val(response.no_container);
+					$('[name="no_invoice"]').val(response.no_invoice);
+  				$('[name="product"]').val(response.product);
+  				$('[name="qty"]').val(response.qty);
+  				$('[name="remark"]').val(response.remark);
+					$('[name="customer"]').val(response.customer);
+					$('[name="destination"]').val(response.destination);
+
+					$(".loading-pop").hide();
+					$("#form_edit").show();
+					$(".canvasshow").css('margin-top','6%');
+					$(".canvasshow").fadeIn(200).animate({'margin-top':'5%'},{queue:false,duration:200});
+				}
+				else
+				{
+					addpop(false);
+				}
+			}
+		});
+	}
+</script>
+
+  <div class="title-main">
+  	<i class="material-icons">input</i>
+  	<h2>DATA</h2>
+  </div>
+  <br>
+  <div class="wrap-satu">
+  	<div class="panel-data">
+			<div class="data-select">
+				<select class="text" id="search-by" name="search">
+					<option value="board">Board</option>
+					<option value="no_container">No Container</option>
+					<option value="no_invoice">No Invoice</option>
+					<option value="product">Product</option>
+          <option value="qty">Qty</option>
+          <option value="remark">Remark</option>
+					<option value="customer">Customer</option>
+					<option value="destination">Destination</option>
+        </select>
+			</div>
+			<div class="data-search">
+				<span class="icon-search"><i class="material-icons">search</i></span>
+				<input id="text-search" type="text" class="search" autocomplete="off" value="" placeholder="Search..." onblur="$('.data-search').removeClass('search-area');$('.icon-close').hide();$('.search-holder').show();$(this).hide()" onkeyup="searchData()" required="">
+				<span class="icon-close"><i class="material-icons">close</i></span>
+			</div>
+      <div id="form_add">
+        <button class="biru plus right" @click="showModalData = true">Add Data</button>
+        <modal-data :show="showModalData" @close="showModalData = false"></modal-data>
+      </div>
+  		<a href='javascript:delChecked("data")' onclick="return konfirmasi(&quot;semua data yang terpilih&quot;)">
+  			<button id="buttonDelete" class="merah" style="float:right;padding:8px 15px;margin-left: 5px;display:none">DELETE SELECTED</button>
+  		</a>
+  	</div>
+  </div>
+
+  <div class="content satu" style="padding: 1%; width: 98%;overflow:visible">
+  	<table class="table" id="table">
+  		<thead>
+  			<tr>
+  				<th width="30" align="center">
+  					<div class="toggle" style="padding-top: 5px;height: 25px;">
+  		    			<input type="checkbox" class="filled-in" id="mainbox" onclick="cekall();clickCheck();">
+  						<label for="mainbox"><span></span></label>
+  					</div>
+  				</th>
+  				<th width="15%" colspan="2">Board</th>
+  				<th width="10%">No Container <br> No Invoice</th>
+          <th width="10%">Product <br> Qty (KG)</th>
+          <th width="15%">Remark</th>
+					<th width="10%">Customer</th>
+					<th width="15%">Destination</th>
+					<th width="5%">Status</th>
+  				<th style="text-align: center;width: 60px;">Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+        <% if(data) { %>
+				<% for(var i=0; i < data.length; i++) { %>
+  			<tr id="data<%= data[i].data_id %>">
+  				<td align="center">
+  					<div class="toggle" style="padding-top: 10px;">
+  		    			<input type="checkbox" class="filled-in chk" id="chk<%= data[i].data_id %>" value="<%= data[i].data_id %>" onclick="clickCheck()">
+  						<label for="chk<%= data[i].data_id %>"><span></span></label>
+  					</div>
+  				</td>
+  				<td>
+            <% var color = ["red","light-red","yellow","orange","green","blue","dark-green","purple","light-green","grey","lime"]; %>
+						<% var picked_color = color[Math.floor(Math.random()*color.length)]; %>
+            <div class="ikon <%= picked_color %>">
+              <%= data[i].no_container.substr(0,1) %>
+            </div>
+  				</td>
+  				<td style="width:300px !important;">
+  					<b><%= data[i].board_name %></b>
+  				</td>
+					<td>
+            <b><span class="exsmall-td"><%= data[i].no_container %></span></b><br>
+						<b><span class="exsmall-td"><%= data[i].no_invoice %></span></b>
+  				</td>
+					<td>
+  					<span class="small-bold"><%= data[i].product %></span><br>
+						<span class="small-bold"><%= data[i].qty %></span>
+  				</td>
+  				<td>
+            <span class="small-bold"><%= data[i].remark %></span>
+  				</td>
+					<td>
+            <span class="small-bold"><%= data[i].customer %></span>
+  				</td>
+					<td>
+            <span class="small-bold"><%= data[i].destination %></span>
+  				</td>
+          <td>
+            <div class="switch" style="margin-top:5px;">
+						<% if(data[i].status == true) { %>
+    					<label>
+    						<input type="checkbox" class="status" value="<%= data[i].data_id %>" id="block<%= data[i].data_id %>" checked>
+    						<span class="lever"></span>
+    					</label>
+						<% } else { %>
+							<label>
+    						<input type="checkbox" class="status" value="<%= data[i].data_id %>" id="block<%= data[i].data_id %>" >
+    						<span class="lever"></span>
+    					</label>
+						<% } %>
+            </div>
+          </td>
+  				<td>
+						<a href="/board/<%= data[i].board_id %>" target="_blank">
+							<div class="action act-detail" data-tooltip="Board Preview">
+							<i class="material-icons">important_devices</i>
+							</div>
+						</a>
+  					<div class="action act-edit" onclick="edit_data(<%= data[i].data_id %>)" data-tooltip="Edit Data" disabled>
+  						<i class="material-icons">mode_edit</i>
+  					</div>
+  					<div class="action act-delete" onclick="hapus('data', <%= data[i].data_id %>, 'data')" data-tooltip="Hapus Data">
+  						<i class="material-icons">delete</i>
+  					</div>
+  				</td>
+  			</tr>
+        <% } %>
+				<% } else { %>
+				<tr id="#">
+  				<td colspan='10' align='center' style='padding:30px 0px;'><span class='small-bold'>No Record, please add new data</span></td>
+  			</tr>
+				<% } %>
+  		</tbody>
+  	</table>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">SHOW ALL</div>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">DATA</div>
+  </div>
+  <!-- template for the NewModal component -->
+  <script type="x/template" id="modal-data">
+      <modal :show="show" @close="close">
+        <div class="title">
+            <h3>Form Data</h3>
+            <div class="canvasmain">
+              <form method="post" action="/cms/data">
+                <table border="0" class="form">
+                  <input type="hidden" name="admin_id" value="<%= session_info.admin_id %>">
+                  <tbody>
+									<tr>
+                    <td>Board</td>
+                    <td>
+                      <select name="board_id" class="select" required>
+  			                <option disabled="disabled">Choose Type</option>
+                        <% if(select_board) { %>
+												<% for(var i=0; i < select_board.length; i++) { %>
+                        	<option value='<%= select_board[i].board_id %>'><%= select_board[i].board_name %></option>
+												<% } %>
+												<% } %>
+  			              </select>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="180">No Container</td>
+                    <td><input type="text" class="text lebar" name="no_container" placeholder="No. Container" required=""></td>
+                  </tr>
+									<tr>
+										<td width="180">No Invoice</td>
+										<td><input type="text" class="text lebar" name="no_invoice" placeholder="No. Invoice" required=""></td>
+									</tr>
+                  <tr>
+                    <td>Product</td>
+                    <td><input type="text" class="text lebar" name="product" placeholder="Product"></td>
+                  </tr>
+									<tr>
+                    <td>Qty (KG)</td>
+                    <td><input type="text" class="text lebar" name="qty" placeholder="Quantity in Kg"></td>
+                  </tr>
+                  <tr>
+                    <td>Remark</td>
+                    <td><input type="text" class="text lebar" name="remark" placeholder="Remark"></td>
+                  </tr>
+									<tr>
+                    <td>Destination</td>
+                    <td><input type="text" class="text lebar" name="customer" placeholder="Customer"></td>
+                  </tr>
+									<tr>
+                    <td>Destination</td>
+                    <td><input type="text" class="text lebar" name="destination" placeholder="Destination"></td>
+                  </tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <button type="submit" class="biru right">SUBMIT</button>
+                      <input type="button" class="button default right" @click="close" value="CLOSE">
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </form>
+              </div>
+        </div>
+      </modal>
+  </script>
+  <script type="text/javascript">
+    Vue.component('ModalData', {
+      template: '#modal-data',
+      props: ['show'],
+      data: function () {
+        return {
+          comment: ''
+        };
+      },
+      methods: {
+        close: function () {
+          this.$emit('close');
+          this.comment = '';
+        },
+        postComment: function () {
+          // Some save logic goes here...
+
+          this.close();
+        }
+      }
+      });
+
+      new Vue({
+        el: '#form_add',
+        data: {
+          showModalData: false
+        }
+      });
+  </script>
+
+  <!-- bagian pop up, html yang digunakan untuk pop up. hampir sama disemua bagian -->
+  <div class="blackout"></div>
+  <div class="blackflash">
+  	<div class="loading-pop">
+  		<div class="loader">
+  			<svg class="circular" viewBox="25 25 50 50">
+  			  <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+  			</svg>
+  		</div>
+  	</div>
+  	<div class="canvasshow">
+      	<div id="form_edit" class="title">
+      		<h3>Form Data</h3>
+      		<div class="canvasmain">
+      			<form method="POST" action="/cms/data">
+  	    			<table border="0" class="form">
+                <input type="hidden" name="_method" value="PUT">
+  	    				<input type="hidden" name="id" value="">
+								<input type="hidden" name="admin_id" value="">
+                <tbody>
+								<tr>
+									<td>Board</td>
+									<td>
+										<select name="board_id" class="select" required>
+											<option disabled="disabled">Choose Type</option>
+											<% if(select_board) { %>
+											<% for(var i=0; i < select_board.length; i++) { %>
+												<option value='<%= select_board[i].board_id %>'><%= select_board[i].board_name %></option>
+											<% } %>
+											<% } %>
+										</select>
+									</td>
+								</tr>
+                <tr>
+									<td width="180">No Container</td>
+									<td><input type="text" class="text lebar" name="no_container" placeholder="No. Container" required=""></td>
+								</tr>
+								<tr>
+									<td width="180">No Invoice</td>
+									<td><input type="text" class="text lebar" name="no_invoice" placeholder="No. Invoice" required=""></td>
+								</tr>
+								<tr>
+									<td>Product</td>
+									<td><input type="text" class="text lebar" name="product" placeholder="Product"></td>
+								</tr>
+								<tr>
+									<td>Qty (KG)</td>
+									<td><input type="text" class="text lebar" name="qty" placeholder="Quantity in Kg"></td>
+								</tr>
+								<tr>
+									<td>Remark</td>
+									<td><input type="text" class="text lebar" name="remark" placeholder="Remark"></td>
+								</tr>
+								<tr>
+									<td>Customer</td>
+									<td><input type="text" class="text lebar" name="customer" placeholder="Customer"></td>
+								</tr>
+								<tr>
+									<td>Destination</td>
+									<td><input type="text" class="text lebar" name="destination" placeholder="Destination"></td>
+								</tr>
+                <tr>
+                  <td></td>
+                  <td><button type="submit" class="biru right">SUBMIT</button>
+  	    					<input type="button" class="button default right" onclick="addpop(false)" value="CLOSE"></td>
+                </tr>
+                </tbody>
+              </table>
+      			</form>
+          	</div>
+  		</div>
+  	</div>
+  </div>
+  <!-- pop up -->
+<% include partial/footer.ejs %>

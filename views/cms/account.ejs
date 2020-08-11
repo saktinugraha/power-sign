@@ -1,0 +1,113 @@
+<% include partial/header.ejs %>
+<% include partial/sidebar.ejs %>
+
+<script type="text/javascript">
+$(document).ready(function() {
+	$.ajax({
+		url: "/cms/auth/edit/"+<%= session_info.admin_id %>,
+		success:function(result,status){
+			response = result;
+			if(response.status == 'ok')
+			{
+				$('[name="id"]').val(response.admin_id);
+				$('[name="admin_name"]').val(response.admin_name);
+				$('[name="username"]').val(response.username);
+			}
+			else
+			{
+				addpop(false);
+			}
+		}
+	});
+
+	//password
+	var password_new = document.getElementById("password_new")
+  var password_retype = document.getElementById("password_retype");
+	function validatePassword(){
+	  if(password_new.value != password_retype.value) {
+	    password_retype.setCustomValidity("Passwords Don't Match");
+	  } else {
+	    password_retype.setCustomValidity('');
+	  }
+	}
+
+	password_new.onchange = validatePassword;
+	password_retype.onkeyup = validatePassword;
+	});
+</script>
+
+<div class="notification">
+</div>
+<style type="text/css">
+	.disabled-input {display: none;}
+	.readonly-input, .readonly-number {display: none}
+</style>
+<div class="wrap-dua" style="box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0px 1px 1px 0 rgba(0, 0, 0, 0.12) !important; margin-top:20px;">
+	<div class="profile-wrap">
+		<div class="profile-picture">
+			<img src="../img/user/logo.jpg">
+		</div>
+		<div class="profile-name">
+			<%= session_info.admin_name %><br>
+			<span class='profile-user'>Freemium User</span>
+		</div>
+	</div>
+	<div class="content full" style="margin-top: 0px;border-radius: 0px 2px 2px 0px;box-shadow: none !important;">
+		<h3>PERSONAL INFORMATION</h3>
+		<form method="POST" action="/cms/auth/update">
+			<table border="0" class="form">
+				<input type="hidden" name="_method" value="PUT">
+				<input type="hidden" name="id" value="">
+				<tr>
+					<td width="220">Name</td>
+					<td><input name="admin_name" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td>Username</td>
+					<td><input name="username" type="text" class="text lebar" value=""></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<br>
+						<button type="submit" class="hijau right">SUBMIT</button>
+						<button type="reset" class="abu right">RESET</button>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<div class="content dua right" style="height:380px;">
+	<h2>GANTI PASSWORD</h2>
+	<br><br>
+	<form method="POST" action="/cms/auth/update_password">
+		<table border="0" class="form left">
+			<input type="hidden" name="_method" value="PUT">
+			<input type="hidden" name="id" value="">
+			<tr>
+				<td width="200">Password</td>
+				<td><input name="password_old" type="password" class="text lebar" placeholder="Tulis Password Lama" required></td>
+			</tr>
+			<tr>
+				<td colspan="2"><h3>PASSWORD BARU</h3></td>
+			</tr>
+			<tr>
+				<td>Password</td>
+				<td><input name="password_new" id="password_new" type="password" class="text lebar" placeholder="Tulis Password Baru" required></td>
+			</tr>
+			<tr>
+				<td>Re-type</td>
+				<td><input name="password_retype" id="password_retype"  type="password" class="text lebar" placeholder="Ulangi Password Baru" required></td>
+			</tr>
+			<tr>
+				<td colspan="2">
+					<br>
+					<button type="submit" class="biru right">SUBMIT</button>
+					<button type="reset" class="abu right">RESET</button>
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+
+<% include partial/footer.ejs %>

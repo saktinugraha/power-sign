@@ -1,0 +1,104 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>PowerSign CMS - Auth System</title>
+		<link rel="stylesheet" type="text/css" href="../css/roboto.css">
+		<link rel="stylesheet" type="text/css" href="../css/auth.css">
+		<link rel="shortcut icon" href="../img/icon.png" />
+		<link rel="stylesheet" type="text/css" href="../css/font-awesome.min.css">
+		<script type='text/javascript' charset='utf-8' src='../js/jquery.js'></script>
+		<script type='text/javascript'>
+			function load() {
+			    $('#register').fadeIn(250).animate({'margin-top':'2%'},{queue:false,duration:200});
+			    $('[name="username"]').focus();
+			}
+			$(document).ready(function(){
+				$("#register_form").submit(function(event){
+			    event.preventDefault();
+			    data = $("#register_form").serialize();
+			   	//$("#f_admin *").prop("disabled","disabled");
+					$(".formload").show();
+
+					var username		= $("[name='username']").val();
+					var password		= $("[name='password']").val();
+					var admin_name = $("[name='admin_name']").val();
+
+		      $.ajax({
+		      	url: "../cms/auth/register/",
+		        type: "POST",
+		        data: {username:username,password:password,admin_name:admin_name},
+		       	success: function(data,result,status) {
+							response = data;
+						 	if(response.status = "success")
+						 	{
+								$('[name="username"]').focus();
+								$(".formload").hide();
+		            $(".notification").html(response.message);
+								window.location.href = "./login";
+							}
+						},
+            error: function(jqXhr,result,errorThrown){
+							if(result = "error")
+							{
+			          $('[name="username"]').focus();
+								$(".formload").hide();
+								$(".notification").html(jqXhr.statusText);
+							}
+		      	}
+		    	});
+		    });
+			});
+		</script>
+	</head>
+	<body onload='load()'>
+		<div class="header">
+        <a class="navbar-brand" href="../"><img src="../img/logo.png" alt=""></a>
+      </div>
+		</div>
+		<div class='form-wrap'>
+			<div id="register">
+				<b>REGISTER FORM</b>
+				<div class="formlog">
+					<div class="formload">
+						<div class="loader">
+							<svg class="circular" viewBox="25 25 50 50">
+							  <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+							</svg>
+						</div>
+					</div>
+					<form method="post" id="register_form">
+
+						<div class="group">
+				      <input type="text" name="username" required>
+				      <span class="highlight"></span>
+				      <span class="bar"></span>
+				      <label class="label">Username</label>
+				    </div>
+
+				    <div class="group">
+				      <input type="password" name="password" required>
+				      <span class="highlight"></span>
+				      <span class="bar"></span>
+				      <label class="label">Password</label>
+				    </div>
+
+						<div class="group">
+				      <input type="text" name="admin_name" required>
+				      <span class="highlight"></span>
+				      <span class="bar"></span>
+				      <label class="label">Admin Name</label>
+				    </div>
+
+						<button type="submit" class="biru right">SIGN UP</button>
+						<div class="notification"></div>
+						<br>Already have account? <a href="login" style="color:blue;">Sign in Here</a>
+					</form>
+				</div>
+			</div>
+			<div class='footer'>
+				<b>PowerSign CMS &copy; 2018</b><br>
+				Allright Reserved by <a href='/' target='_blank'>PowerSign CMS</a>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,354 @@
+<% include partial/header.ejs %>
+<% include partial/sidebar.ejs %>
+
+<script type="text/javascript">
+
+$(document).ready(function() {
+	$(".status").on("click", function(){
+		var id = parseInt($(this).val(), 10);
+	 	//alert(id);
+	  if($(this).is(":checked")) {
+	  	// checkbox is checked -> do something
+	    toast("Admin Status Activated");
+			$.ajax({type: 'PUT', url: "/cms/admin/"+id+"/1",
+				success:function(result,status){  } });
+	  } else {
+	  	// checkbox is not checked -> do something different
+	  	toast("Admin Status Blocked");
+			$.ajax({type: 'PUT', url: "/cms/admin/"+id+"/0",
+				success:function(result,status){  } });
+		}
+	});
+});
+
+	function searchAdmin() {
+		var select, text, filter, table, tr, td, i;
+		select 	= document.getElementById("search-by");
+		text 		= document.getElementById("text-search");
+		table 	= document.getElementById("table");
+		filter 	= text.value.toUpperCase();
+		tr 			= table.getElementsByTagName("tr");
+
+		// Loop through all table rows, and hide those who don't match the search query
+		for (i = 0; i < tr.length; i++) {
+			if(select.options[select.selectedIndex].value == "admin_name") {
+				td = tr[i].getElementsByTagName("td")[2];
+			} else if(select.options[select.selectedIndex].value == "username") {
+				td = tr[i].getElementsByTagName("td")[3];
+			} else if(select.options[select.selectedIndex].value == "role") {
+				td = tr[i].getElementsByTagName("td")[5];
+			}
+
+			if (td) {
+				if (td.innerHTML.toUpperCase().indexOf(filter) > -1) {
+					tr[i].style.display = "";
+				} else {
+					tr[i].style.display = "none";
+				}
+			}
+		}
+	}
+
+	function edit_admin(id)
+	{
+		$(".blackflash").show();
+		$(".loading-pop").show();
+		$.ajax({
+			url: "/cms/admin/"+id,
+			success:function(result,status){
+				$(".blackout").show();
+				$("#form_edit").show();
+        response = result;
+				if(response.status == 'ok')
+				{
+  				$('[name="id"]').val(response.admin_id);
+  				$('[name="admin_name"]').val(response.admin_name);
+					$('[name="username"]').val(response.username);
+  				$('[name="password"]').val(response.password);
+  				$('[name="role"]').val(response.role);
+					$('[name="status_activation"]').val(response.status_activation);
+
+					$(".loading-pop").hide();
+					$("#form_edit").show();
+					$(".canvasshow").css('margin-top','6%');
+					$(".canvasshow").fadeIn(200).animate({'margin-top':'5%'},{queue:false,duration:200});
+				}
+				else
+				{
+					addpop(false);
+				}
+			}
+		});
+	}
+
+</script>
+
+  <div class="title-main">
+  	<i class="material-icons">input</i>
+  	<h2>ADMIN</h2>
+  </div>
+  <br>
+  <div class="wrap-satu">
+  	<div class="panel-data">
+			<div class="data-select">
+				<select class="text" id="search-by" name="search">
+					<option value="admin_name">Admin Name</option>
+					<option value="username">Username</option>
+					<option value="role">Role</option>
+        </select>
+			</div>
+			<div class="data-search">
+				<span class="icon-search"><i class="material-icons">search</i></span>
+				<input id="text-search" type="text" class="search" autocomplete="off" value="" placeholder="Search..." onblur="$('.data-search').removeClass('search-area');$('.icon-close').hide();$('.search-holder').show();$(this).hide()" onkeyup="searchAdmin()" required="">
+				<span class="icon-close"><i class="material-icons">close</i></span>
+			</div>
+      <div id="form_add">
+        <button class="biru plus right" @click="showModalAdmin = true">Add Admin</button>
+        <modal-admin :show="showModalAdmin" @close="showModalAdmin = false"></modal-admin>
+      </div>
+  		<a href='javascript:delChecked("admin")' onclick="return konfirmasi(&quot;semua admin yang terpilih&quot;)">
+  			<button id="buttonDelete" class="merah" style="float:right;padding:8px 15px;margin-left: 5px;display:none">DELETE SELECTED</button>
+  		</a>
+  	</div>
+  </div>
+
+  <div class="content satu" style="padding: 1%; width: 98%;overflow:visible">
+  	<table class="table" id="table">
+  		<thead>
+  			<tr>
+  				<th width="30" align="center">
+  					<div class="toggle" style="padding-top: 5px;height: 25px;">
+  		    			<input type="checkbox" class="filled-in" id="mainbox" onclick="cekall();clickCheck();">
+  						<label for="mainbox"><span></span></label>
+  					</div>
+  				</th>
+  				<th width="15%" colspan="2">Admin Name</th>
+  				<th width="10%">Username</th>
+          <th width="25%">Password</th>
+          <th width="15%">Role</th>
+					<th width="10%">Entry</th>
+					<th width="5%">Status</th>
+  				<th style="text-align: center;width: 60px;">Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+        <% if(admin) { %>
+				<% for(var i=0; i < admin.length; i++) { %>
+  			<tr id="admin<%= admin[i].admin_id %>">
+  				<td align="center">
+  					<div class="toggle" style="padding-top: 10px;">
+  		    			<input type="checkbox" class="filled-in chk" id="chk<%= admin[i].admin_id %>" value="<%= admin[i].admin_id %>" onclick="clickCheck()">
+  						<label for="chk<%= admin[i].admin_id %>"><span></span></label>
+  					</div>
+  				</td>
+  				<td>
+            <% var color = ["red","light-red","yellow","orange","green","blue","dark-green","purple","light-green","grey","lime"]; %>
+						<% var picked_color = color[Math.floor(Math.random()*color.length)]; %>
+            <div class="ikon <%= picked_color %>">
+              <%= admin[i].admin_name.substr(0,1) %>
+            </div>
+  				</td>
+					<td style="width:300px !important;">
+  					<b><%= admin[i].admin_name %></b>
+  				</td>
+					<td>
+  					<span class="small-bold"><%= admin[i].username %></span>
+  				</td>
+  				<td>
+            <span class="small-bold"><%= admin[i].password %></span>
+  				</td>
+					<td>
+						<%
+							if(admin[i].role == '1'){
+								var role = "Admin";
+							}
+						%>
+            <span class="small-bold"><%= role %></span>
+  				</td>
+					<td>
+            <span class="small-bold"><%= admin[i].total_entry %> Data</span><br>
+  				</td>
+          <td>
+            <div class="switch" style="margin-top:5px;">
+						<% if(admin[i].status_activation == true) { %>
+    					<label>
+    						<input type="checkbox" class="status" value="<%= admin[i].admin_id %>" id="block<%= admin[i].admin_id %>" checked>
+    						<span class="lever"></span>
+    					</label>
+						<% } else { %>
+							<label>
+    						<input type="checkbox" class="status" value="<%= admin[i].admin_id %>" id="block<%= admin[i].admin_id %>" >
+    						<span class="lever"></span>
+    					</label>
+						<% } %>
+            </div>
+          </td>
+  				<td>
+  					<div class="action act-edit" onclick="edit_admin(<%= admin[i].admin_id %>)" admin-tooltip="Edit Admin" disabled>
+  						<i class="material-icons">mode_edit</i>
+  					</div>
+  					<div class="action act-delete" onclick="hapus('admin', <%= admin[i].admin_id %>, 'admin')" data-tooltip="Hapus Admin">
+  						<i class="material-icons">delete</i>
+  					</div>
+  				</td>
+  			</tr>
+        <% } %>
+				<% } else { %>
+				<tr id="#">
+  				<td colspan='10' align='center' style='padding:30px 0px;'><span class='small-bold'>No Record, please add new admin</span></td>
+  			</tr>
+				<% } %>
+  		</tbody>
+  	</table>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">SHOW ALL</div>
+  	<div class="small-bold" style="float:left;padding: 7px 0px 0px 5px;">ADMIN</div>
+  </div>
+  <!-- template for the NewModal component -->
+  <script type="x/template" id="modal-admin">
+      <modal :show="show" @close="close">
+        <div class="title">
+            <h3>Form Admin</h3>
+            <div class="canvasmain">
+              <form method="post" action="/cms/admin">
+                <table border="0" class="form">
+                  <tbody>
+                  <tr>
+                    <td width="180">Admin Name</td>
+                    <td><input type="text" class="text lebar" name="admin_name" placeholder="Admin Name" required=""></td>
+                  </tr>
+                  <tr>
+                    <td>Username</td>
+                    <td><input type="text" class="text lebar" name="username" placeholder="Username" required=""></td>
+                  </tr>
+									<tr>
+                    <td>Password</td>
+                    <td><input type="password" class="text lebar" name="password" placeholder="Password" required=""></td>
+                  </tr>
+                  <tr>
+										<td>Role</td>
+										<td>
+											<select name="role" class="select" required>
+												<option disabled="disabled">Choose Role</option>
+												<option value='1'>Admin</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<td>Status Activation</td>
+										<td>
+											<select name="status_activation" class="select" required>
+												<option disabled="disabled">Choose Status Activation</option>
+												<option value='0'>Blocked</option>
+												<option value='1'>Active</option>
+											</select>
+										</td>
+									</tr>
+                  <tr>
+                    <td></td>
+                    <td>
+                      <button type="submit" class="biru right">SUBMIT</button>
+                      <input type="button" class="button default right" @click="close" value="CLOSE">
+                    </td>
+                  </tr>
+                  </tbody>
+                </table>
+              </form>
+              </div>
+        </div>
+      </modal>
+  </script>
+  <script type="text/javascript">
+    Vue.component('ModalAdmin', {
+      template: '#modal-admin',
+      props: ['show'],
+      data: function () {
+        return {
+          comment: ''
+        };
+      },
+      methods: {
+        close: function () {
+          this.$emit('close');
+          this.comment = '';
+        },
+        postComment: function () {
+          // Some save logic goes here...
+
+          this.close();
+        }
+      }
+      });
+
+      new Vue({
+        el: '#form_add',
+        data: {
+          showModalAdmin: false
+        }
+      });
+  </script>
+
+  <!-- bagian pop up, html yang digunakan untuk pop up. hampir sama disemua bagian -->
+  <div class="blackout"></div>
+  <div class="blackflash">
+  	<div class="loading-pop">
+  		<div class="loader">
+  			<svg class="circular" viewBox="25 25 50 50">
+  			  <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="5" stroke-miterlimit="10"></circle>
+  			</svg>
+  		</div>
+  	</div>
+  	<div class="canvasshow">
+      	<div id="form_edit" class="title">
+      		<h3>Form Admin</h3>
+      		<div class="canvasmain">
+      			<form method="POST" action="/cms/admin">
+  	    			<table border="0" class="form">
+                <input type="hidden" name="_method" value="PUT">
+  	    				<input type="hidden" name="id" value="">
+								<input type="hidden" name="admin_id" value="">
+                <tbody>
+                <tr>
+									<td width="180">Admin Name</td>
+									<td><input type="text" class="text lebar" name="admin_name" placeholder="Admin Name" required=""></td>
+								</tr>
+								<tr>
+									<td>Username</td>
+									<td><input type="text" class="text lebar" name="username" placeholder="Username" required=""></td>
+								</tr>
+								<tr>
+									<td>Password</td>
+									<td><input type="password" class="text lebar" name="password" placeholder="Password"></td>
+								</tr>
+								<tr>
+									<td>Role</td>
+									<td>
+										<select name="role" class="select" required>
+											<option disabled="disabled">Choose Role</option>
+											<option value='1'>Admin</option>
+										</select>
+									</td>
+								</tr>
+								<tr>
+									<td>Status Activation</td>
+									<td>
+										<select name="status_activation" class="select" required>
+											<option disabled="disabled">Choose Status Activation</option>
+											<option value='0'>Blocked</option>
+											<option value='1'>Active</option>
+										</select>
+									</td>
+								</tr>
+                <tr>
+                  <td></td>
+                  <td><button type="submit" class="biru right">SUBMIT</button>
+  	    					<input type="button" class="button default right" onclick="addpop(false)" value="CLOSE"></td>
+                </tr>
+                </tbody>
+              </table>
+      			</form>
+          	</div>
+  		</div>
+  	</div>
+  </div>
+  <!-- pop up -->
+<% include partial/footer.ejs %>

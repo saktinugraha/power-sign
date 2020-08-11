@@ -1,0 +1,629 @@
+html, body
+{
+	margin:0;
+	padding:0;
+	list-style:none;
+}
+body
+{
+	margin: 0 auto;
+	background: #FAFAFA;
+    font-family: 'Roboto', sans-serif;
+	font-size:14px;
+	color:#555;
+}
+h1, h2, h3 {
+    font-family: 'Roboto', sans-serif;
+    padding: 0px;
+    margin: 0px;
+    font-size: 19px;
+}
+h3 {
+    font-size: 16px;
+}
+/* ------------ Property ------------- */
+*:focus
+{
+    outline: none;
+}
+input:invalid {
+    box-shadow: none;
+}
+input:required {
+    box-shadow:none;
+}
+a, a:link, a:visited
+{
+    cursor: pointer;
+    color: #fff;
+    text-decoration: none;
+}
+a:hover
+{
+    text-decoration: underline;
+}
+.text {
+    padding: 8px 10px;
+    border: #ddd solid 1px;
+    font-family: 'Roboto', sans-serif;
+    background: #fdfdfd;
+    color: #555;
+    font-size: 14px;
+    box-shadow: 0px 1px 1px #e1e1e1 inset, 0px 1px 0px #FFF;
+    width: 225px;
+}
+.button {
+    border: none;
+    padding: 10px 20px;
+    font-family: 'Roboto', sans-serif;
+    color: #fff;
+    border-radius: 2px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+.hitam {
+    background: #35364B;
+}
+.hitam:active {
+    box-shadow: 0px 2px 2px #111111 inset, 0px 0px 0px #fff;
+}
+.login-logo {
+    margin: 0 auto;
+    width: 300px;
+    margin-top: 7%;
+    text-align: center;
+}
+.login-logo img {
+    max-width: 100%;
+}
+.header {
+		background-color : #fff;
+		padding : 20px;
+		border  : none;
+		border-radius : 0;
+}
+#login {
+    margin: 0 auto;
+    width: 300px;
+    padding: 30px 20px;
+    margin-top: 0%;
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0px 1px 1px 0 rgba(0, 0, 0, 0.12) !important;
+    text-align: center;
+    overflow: hidden;
+    display: none;
+}
+#register {
+    margin: 0 auto;
+    width: 300px;
+    padding: 30px 20px;
+    margin-top: 10%;
+    margin-bottom: 20px;
+    background: #fff;
+    border-radius: 3px;
+    box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.12), 0px 1px 1px 0 rgba(0, 0, 0, 0.12) !important;
+    text-align: center;
+    overflow: hidden;
+    display: none;
+}
+.photo-thumb {
+    margin: 0 auto;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    overflow: hidden;
+    box-shadow: #ccc 0px 1px 2px;
+}
+.photo-thumb img {
+    width: 100%;
+}
+.formlog {
+    position: relative;
+    margin: 0 auto;
+    width: 285px;
+    text-align: left;
+    margin-top: 30px;
+    line-height: 29px;
+    color: #777;
+}
+.formload {
+    position: absolute;
+    top: -20px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background: rgba(255, 255, 255, 0.8);
+    display: none;
+    z-index: 9;
+}
+.notification {
+    float: left;
+    width: 100%;
+    padding-top: 20px;
+    color: #EE4D53;
+    font-size: 14px;
+}
+
+
+/* form starting stylings ------------------------------- */
+.group            {
+  position:relative;
+  margin-bottom:30px;
+}
+input {
+  font-size:18px;
+  letter-spacing: 1px;
+  padding:10px 10px 10px 5px;
+  display:block;
+  width:270px;
+  border:none;
+  border-bottom:1px solid #ccc;
+}
+input:focus         { outline:none; }
+
+/* LABEL ======================================= */
+.label                {
+  color:#999;
+  font-size:16px;
+  font-weight:normal;
+  position:absolute;
+  pointer-events:none;
+  left:5px;
+  top:10px;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
+  -webkit-transition:0.2s ease all;
+}
+
+/* active state */
+input:focus ~ .label, input:valid ~ .label        {
+  top:-20px;
+  font-size:14px;
+  color:#03A9F4;
+}
+
+/* BOTTOM BARS ================================= */
+.bar    { position:relative; display:block; width:285px; }
+.bar:before, .bar:after     {
+  content:'';
+  height:2px;
+  width:0;
+  bottom:1px;
+  position:absolute;
+  background:#03A9F4;
+  transition:0.2s ease all;
+  -moz-transition:0.2s ease all;
+  -webkit-transition:0.2s ease all;
+}
+.bar:before {
+  left:50%;
+}
+.bar:after {
+  right:50%;
+}
+
+/* active state */
+input:focus ~ .bar:before, input:focus ~ .bar:after {
+  width:50%;
+}
+
+/* HIGHLIGHTER ================================== */
+.highlight {
+  position:absolute;
+  height:60%;
+  width:100px;
+  top:25%;
+  left:0;
+  pointer-events:none;
+  opacity:0.5;
+}
+
+/* active state */
+input:focus ~ .highlight {
+  -webkit-animation:inputHighlighter 0.3s ease;
+  -moz-animation:inputHighlighter 0.3s ease;
+  animation:inputHighlighter 0.3s ease;
+}
+
+/* ANIMATIONS ================ */
+@-webkit-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@-moz-keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+@keyframes inputHighlighter {
+    from { background:#5264AE; }
+  to    { width:0; background:transparent; }
+}
+
+
+button, .button {
+    border: none;
+    padding: 8px 25px;
+    color: #fff;
+    border-radius: 2px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 5px;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.12);
+    font-family: 'Roboto',sans-serif !important;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0;
+    will-change: box-shadow, transform;
+    transition: box-shadow 0.2s cubic-bezier(0.4, 0, 1, 1), background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    background: transparent;
+    position: relative;
+    overflow: hidden;
+}
+button:after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 120px;
+    height: 120px;
+    margin-left: -60px;
+    margin-top: -60px;
+    background: #fff;
+    border-radius: 100%;
+    opacity: .6;
+    transform: scale(0);
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0);
+  }
+  20% {
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+button:not(:active):after {
+  animation: ripple 1s ease-out;
+}
+button:after {
+  visibility: hidden;
+}
+button:focus:after {
+  visibility: visible;
+}
+.biru {
+    background-color: #03A9F4;
+}
+.biru:active {
+    box-shadow: 0 4px 8px rgba(0,0,0,.3),0 4px 8px rgba(0,0,0,.22);
+}
+.right {
+    float: right;
+}
+
+.loader{position:relative;margin:0 auto;width:40px;margin-bottom:40px; margin-top: 23%;}
+.loader:before{content:'';display:block;padding-top:100%}
+.circular{animation:rotate 2s linear infinite;height:100%;transform-origin:center center;width:100%;position:absolute;top:0;bottom:0;left:0;right:0;margin:auto}
+.path{stroke-dasharray:1,200;stroke-dashoffset:0;animation:dash 1.5s ease-in-out infinite,color 6s ease-in-out infinite;stroke-linecap:round}
+@keyframes rotate {
+100%{transform:rotate(360deg)}
+}
+@keyframes dash {
+0%{stroke-dasharray:1,200;stroke-dashoffset:0}
+50%{stroke-dasharray:89,200;stroke-dashoffset:-35px}
+100%{stroke-dasharray:89,200;stroke-dashoffset:-124px}
+}
+@keyframes color{
+  100%, 0%{
+    stroke: #d62d20;
+  }
+  40%{
+    stroke: #0057e7;
+  }
+  66%{
+    stroke: #008744;
+  }
+  80%, 90%{
+    stroke: #ffa700;
+  }
+}
+
+
+/* ------------ checkbox ------------ */
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked {
+    position: absolute;
+    left: -9999px;
+    opacity: 0
+}
+
+[type="checkbox"]+label.me {
+    position: relative;
+    padding-left: 30px;
+    cursor: pointer;
+    display: inline-block;
+    height: 21px;
+    line-height: 21px;
+    font-size: 1rem;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none
+}
+
+[type="checkbox"]+label.me:before,
+[type="checkbox"]:not(.filled-in)+label.me:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    z-index: 0;
+    border: 2px solid #5a5a5a;
+    border-radius: 1px;
+    margin-top: 2px;
+    transition: .2s
+}
+
+[type="checkbox"]:not(.filled-in)+label.me:after {
+    border: 0;
+    -webkit-transform: scale(0);
+    transform: scale(0)
+}
+
+[type="checkbox"]:not(:checked):disabled+label.me:before {
+    border: none;
+    background-color: rgba(0, 0, 0, 0.26)
+}
+
+[type="checkbox"].tabbed:focus+label.me:after {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    border: 0;
+    border-radius: 50%;
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(0, 0, 0, 0.1)
+}
+
+[type="checkbox"]:checked+label.me:before {
+    top: -4px;
+    left: -5px;
+    width: 12px;
+    height: 22px;
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid #03a9f4;
+    border-bottom: 2px solid #03a9f4;
+    -webkit-transform: rotate(40deg);
+    transform: rotate(40deg);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%
+}
+
+[type="checkbox"]:checked:disabled+label.me:before {
+    border-right: 2px solid rgba(0, 0, 0, 0.26);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.26)
+}
+
+[type="checkbox"]:indeterminate+label.me:before {
+    top: -11px;
+    left: -12px;
+    width: 10px;
+    height: 22px;
+    border-top: none;
+    border-left: none;
+    border-right: 2px solid #26a69a;
+    border-bottom: none;
+    -webkit-transform: rotate(90deg);
+    transform: rotate(90deg);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%
+}
+
+[type="checkbox"]:indeterminate:disabled+label.me:before {
+    border-right: 2px solid rgba(0, 0, 0, 0.26);
+    background-color: transparent
+}
+
+[type="checkbox"].filled-in+label.me:after {
+    border-radius: 2px
+}
+
+[type="checkbox"].filled-in+label.me:before,
+[type="checkbox"].filled-in+label.me:after {
+    content: '';
+    left: 0;
+    position: absolute;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1
+}
+
+[type="checkbox"].filled-in:not(:checked)+label.me:before {
+    width: 0;
+    height: 0;
+    border: 3px solid transparent;
+    left: 6px;
+    top: 10px;
+    -webkit-transform: rotateZ(37deg);
+    transform: rotateZ(37deg);
+    -webkit-transform-origin: 20% 40%;
+    transform-origin: 100% 100%
+}
+
+[type="checkbox"].filled-in:not(:checked)+label.me:after {
+    height: 15px;
+    width: 15px;
+    background-color: transparent;
+    border: 2px solid #5a5a5a;
+    top: 0px;
+    z-index: 0
+}
+
+[type="checkbox"].filled-in:checked+label.me:before {
+    top: 0;
+    left: 1px;
+    width: 4px;
+    height: 9px;
+    border-top: 2px solid transparent;
+    border-left: 2px solid transparent;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    -webkit-transform: rotateZ(37deg);
+    transform: rotateZ(37deg);
+    -webkit-transform-origin: 100% 100%;
+    transform-origin: 100% 100%
+}
+
+[type="checkbox"].filled-in:checked+label.me:after {
+    top: 0;
+    width: 15px;
+    height: 15px;
+    border: 2px solid #03a9f4;
+    background-color: #03a9f4;
+    z-index: 0
+}
+
+[type="checkbox"].filled-in.tabbed:focus+label.me:after {
+    border-radius: 2px;
+    border-color: #5a5a5a;
+    background-color: rgba(0, 0, 0, 0.1)
+}
+
+[type="checkbox"].filled-in.tabbed:checked:focus+label.me:after {
+    border-radius: 2px;
+    background-color: #03a9f4;
+    border-color: #03a9f4
+}
+
+[type="checkbox"].filled-in:disabled:not(:checked)+label.me:before {
+    background-color: transparent;
+    border: 2px solid transparent
+}
+
+[type="checkbox"].filled-in:disabled:not(:checked)+label.me:after {
+    border-color: transparent;
+    background-color: #BDBDBD
+}
+
+[type="checkbox"].filled-in:disabled:checked+label.me:before {
+    background-color: transparent
+}
+
+[type="checkbox"].filled-in:disabled:checked+label.me:after {
+    background-color: #BDBDBD;
+    border-color: #BDBDBD
+}
+
+.switch,
+.switch * {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -khtml-user-select: none;
+    -ms-user-select: none
+}
+
+.switch label.me {
+    cursor: pointer
+}
+
+.switch label.me input[type=checkbox] {
+    opacity: 0;
+    width: 0;
+    height: 0
+}
+
+.switch label.me input[type=checkbox]:checked+.lever {
+    background-color: #84c7c1
+}
+
+.switch label.me input[type=checkbox]:checked+.lever:after {
+    background-color: #26a69a;
+    left: 24px
+}
+
+.switch label.me .lever {
+    content: "";
+    display: inline-block;
+    position: relative;
+    width: 40px;
+    height: 15px;
+    background-color: #818181;
+    border-radius: 15px;
+    margin-right: 10px;
+    transition: background 0.3s ease;
+    vertical-align: middle;
+    margin: 0 16px
+}
+
+.switch label.me .lever:after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 21px;
+    height: 21px;
+    background-color: #F1F1F1;
+    border-radius: 21px;
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4);
+    left: -5px;
+    top: -3px;
+    transition: left 0.3s ease, background .3s ease, box-shadow 0.1s ease
+}
+
+input[type=checkbox]:checked:not(:disabled) ~ .lever:active::after,
+input[type=checkbox]:checked:not(:disabled).tabbed:focus ~ .lever::after {
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(38, 166, 154, 0.1)
+}
+
+input[type=checkbox]:not(:disabled) ~ .lever:active:after,
+input[type=checkbox]:not(:disabled).tabbed:focus ~ .lever::after {
+    box-shadow: 0 1px 3px 1px rgba(0, 0, 0, 0.4), 0 0 0 15px rgba(0, 0, 0, 0.08)
+}
+
+.switch input[type=checkbox][disabled]+.lever {
+    cursor: default
+}
+
+.switch label.me input[type=checkbox][disabled]+.lever:after,
+.switch label.me input[type=checkbox][disabled]:checked+.lever:after {
+    background-color: #BDBDBD
+}
+.form-wrap {
+    position: relative;
+    overflow: hidden;
+    min-height: 550px;
+		background-image: url(../img/bg-auth.png);
+		background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+.footer {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    line-height: 20px;
+    color: #888;
+    padding-top: 10px;
+		background-color: white;
+}
+.footer a {
+    color: #777;
+}

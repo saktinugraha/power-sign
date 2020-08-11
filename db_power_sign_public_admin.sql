@@ -1,0 +1,3 @@
+INSERT INTO public.admin (admin_id, admin_name, username, password, role, status_activation, "createdAt", "updatedAt") VALUES (1, 'superadmin', 'superadmin', '$1$38VZlfwk$g7rzSEcJ33sgbI0yVbprb.', 1, 1, '2018-08-11 06:20:03.947000', null);
+INSERT INTO public.admin (admin_id, admin_name, username, password, role, status_activation, "createdAt", "updatedAt") VALUES (2, 'admin', 'admin', '$1$ho1yRQSr$z5gv0Q5gTr2omtdT0o8vi1', 1, 1, '2018-08-22 00:21:16.287000', null);
+INSERT INTO public.admin (admin_id, admin_name, username, password, role, status_activation, "createdAt", "updatedAt") VALUES (3, 'admin2', 'admin2', '$1$izPuFARI$JMc349dv7r.MkZuGtoZI71', 1, 1, '2018-08-22 00:30:44.617000', null);
